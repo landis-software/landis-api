@@ -4,24 +4,36 @@ wrapper = require("api-wrapper");
 bluebird = require("bluebird");
 //mysql = require("mysql")
 
+// eh might be more ideal to fuck off with this and work it into ForumUser
 class ProfilePost {
 
-    set content(msg) {
-        this._content = msg;
-    }
-
-    post(user) {
+    send(user,content) {
         if (user instanceof ForumUser) {
             return this.client.__api.makeProfilePostAsync({
                 user_id: user.dat.user_id,
-                message: this._content
+                message: content
             }, "");
         }
     }
 
     constructor(client) {
         this.client = client;
-        this._content = "Empty Message.";
+    }
+}
+
+class Thread {
+
+    reply(msg) {
+        msg = escape(msg)
+        return this.client.__api.postMessageAsync({
+            thread_id: this.thread_id,
+            message: msg
+        }, "");
+    }
+
+    constructor(client,thread_id) {
+        this.client = client;
+        this.thread_id = thread_id;
     }
 }
 
@@ -68,8 +80,8 @@ class ForumUser {
     // writes a profile post to the user sent from the account linked with API key, does NOT work if no account is associated with  the API key
     postToProfile(message) {
         let profilePost = new ProfilePost(this.__forum);
-        profilePost.content = "Hello World";
-        profilePost.post(this);
+        //profilePost.content = "Hello World";
+        profilePost.post(this,message);
     }
 
     set username(name) {
@@ -91,6 +103,10 @@ class ForumUser {
 }
 
 class Forum {
+    
+    get API() {
+        return this.__api;
+    }
 
     __getUser(id, callback) {
         forum.__api.getUser({
@@ -108,6 +124,12 @@ class Forum {
             callback(author,body)
         });
     }
+
+    postToThread(id, message) {
+        let thread = new Thread(this, id);
+        thread.reply(message).then((a) => { console.log(a) });
+    }
+
     constructor(token) {
         this.Token = token;
         
@@ -145,10 +167,11 @@ const main = async () => {
     }
     else
     {
-        let user = new ForumUser(forum, 269);
+        forum.postToThread(5,"this is a test message sent from the LANDIS API!!")
+        /*let user = new ForumUser(forum, 269);
         user.on("connected", (data) => {
             user.postToProfile("Hello world!")
-        })
+        })*/
     }
     await snooze(4000)
     main()
