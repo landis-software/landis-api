@@ -1,4 +1,9 @@
 export class Thread {
+    
+    // Returns <Promise>
+    reply(message) {
+        return this.client.postToThread(this.thread_id, message);
+    }
 
     on(event, callback) {
         this._events[event] = callback;
