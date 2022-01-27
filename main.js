@@ -23,17 +23,22 @@ class ProfilePost {
 
 class Thread {
 
-    reply(msg) {
-        msg = escape(msg)
-        return this.client.__api.postMessageAsync({
-            thread_id: this.thread_id,
-            message: msg
-        }, "");
+    on(event, callback) {
+        if (event == "setup")
+            this.__connectEvent = callback;
     }
 
     constructor(client,thread_id) {
         this.client = client;
         this.thread_id = thread_id;
+        this.__connectEvent = () => { };
+        this.data = {};
+        this.client.API.getThreadAsync({ id: thread_id }, "").then((data) => {
+            if (data.body) {
+                this.data = JSON.parse(data.body).thread;
+                this.__connectEvent(this.data)
+            }
+        })
     }
 }
 
@@ -126,8 +131,11 @@ class Forum {
     }
 
     postToThread(id, message) {
-        let thread = new Thread(this, id);
-        thread.reply(message).then((a) => { console.log(a) });
+        msg = escape(message);
+        return this.API.postMessageAsync({
+            thread_id: id,
+            message: msg
+        }, "");
     }
 
     constructor(token) {
@@ -167,7 +175,11 @@ const main = async () => {
     }
     else
     {
-        forum.postToThread(5,"this is a test message sent from the LANDIS API!!")
+        let foo = new Thread(forum, 5);
+        foo.on("setup", (thread) => {
+            console.log(thread);
+        })
+        //forum.postToThread(5,"this is a test message sent from the LANDIS API!!")
         /*let user = new ForumUser(forum, 269);
         user.on("connected", (data) => {
             user.postToProfile("Hello world!")
