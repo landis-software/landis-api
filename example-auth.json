@@ -1,0 +1,31 @@
+{
+  // XenForo operates mostly on their REST API, though some other things edit directly via the DB
+  "XenForo": {
+    "web-url": "https://forums.landis-community.com", // Make sure not trailing slash
+    "api-key": "*****",
+    "db": {
+      "user": "root",
+      "pass": "",
+      "ip": "127.0.0.1",
+      "name": "xenforo_example"
+    }
+  },
+  // Details for an impulse Framework Database.
+  "impulse": {
+    "db": {
+      "user": "root",
+      "pass": "",
+      "ip": "127.0.0.1",
+      "name": "impulse_example"
+    }
+  },
+  // GExtension integration
+  "gex": {
+    "db": {
+      "user": "root",
+      "pass": "",
+      "ip": "127.0.0.1",
+      "name": "impulse_example"
+    }
+  }
+}
