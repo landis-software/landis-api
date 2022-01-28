@@ -1,4 +1,8 @@
-export class Forum {
+/* Require Libs */
+wrapper = require("api-wrapper");
+bluebird = require("bluebird");
+
+class Forum {
     
     get API() {
         return this.__api;
@@ -29,6 +33,10 @@ export class Forum {
         }, "");
     }
 
+    on(event, callback) {
+        this._events[event] = callback;
+    }
+
     constructor(token) {
         this.Token = token;
         
@@ -43,7 +51,8 @@ export class Forum {
                 getThread: "threads/${id}/",
                 getUser: "users/${id}/",
                 getForum: "forums/${id}/threads/",
-                getMessage: "posts/${id}/"
+                getMessage: "posts/${id}/",
+                getNode: "nodes/${id}/"
             },
             post: {
                 makeProfilePost: "profile-posts/?user_id|message",
@@ -57,3 +66,4 @@ export class Forum {
         this.__api = bluebird.promisifyAll(this.__api);
     }
 };
+module.exports = Forum;

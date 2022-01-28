@@ -1,4 +1,5 @@
-export class ForumUser {
+/* Require Libs */
+class ForumUser {
 
     get dat() {
         return this.__data.user;
@@ -62,3 +63,4 @@ export class ForumUser {
         })
     }
 }
+module.exports = ForumUser;

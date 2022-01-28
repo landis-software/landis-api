@@ -3,7 +3,7 @@
 
 
 // unfinished!!!!!!!!!!!!!!!
-export class Node {
+class Node {
   
   update() {
     if (!this.is_existing)
@@ -23,5 +23,19 @@ export class Node {
       this.is_existing = false;
     }
     this.client = client;
+    console.log(id);
+
+    // Get node DATA
+    if (id != undefined) {
+      this.client.API.getNodeAsync({ id: id }, "")
+      .then((data) => {
+          //console.log(data);
+        if (data.body) {
+          this.data = JSON.parse(data.body);
+          console.log(this.data);
+        }
+      })
+    }
   }
 }
+module.exports = Node;

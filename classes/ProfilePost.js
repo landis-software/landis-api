@@ -1,5 +1,5 @@
 // eh this SUCKS!
-export class ProfilePost {
+class ProfilePost {
 
     send(user,content) {
         if (user instanceof ForumUser) {
@@ -14,3 +14,5 @@ export class ProfilePost {
         this.client = client;
     }
 }
+
+module.exports = ProfilePost;
