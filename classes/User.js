@@ -1,5 +1,5 @@
 ForumUser = require('./ForumUser.js');
 
-class ImpulseUser extends ForumUser {
+class User extends ForumUser {
 }
-module.exports = ImpulseUser;
+module.exports = User;
