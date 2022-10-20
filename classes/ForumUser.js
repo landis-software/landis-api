@@ -1,66 +1,73 @@
 /* Require Libs */
 class ForumUser {
 
-    get dat() {
-        return this.__data.user;
-    }
+	get API() {
+		return this.__forum.API;
+	}
 
-    get id() {
-        return this.dat.user_id;
-    }
+	get dat() {
+		return this.__data.user;
+	};
 
-    get username() {
-        return this.dat.username;
-    }
-    get staff() {
-        return this.dat.is_staff;
-    }
+	get id() {
+		return this.dat.user_id;
+	};
 
-    on(event, callback) {
-        if (event == "connected")
-            this.__connectEvent = callback;
-    }
-    
-    setUsername(name) {
-        return this.__forum.__api.setUserNameAsync({
-            id: this.dat.user_id,
-            username: name
-        }, "").then((a) => {
-                if (a.body) {
-                    let data = JSON.parse(a.body)
-                    if (data.success) {
-                        console.log('User[' + this.id.toString() + '] username changed successfully.')
-                        this.__data.user.username = name;
-                    } else {
-                        console.warn('User[' + this.id.toString() + '] username changed successfully.')
-                    }
-                }
-            })
-    }
+	get username() {
+		return this.dat.username;
+	};
 
-    // async
-    // writes a profile post to the user sent from the account linked with API key, does NOT work if no account is associated with  the API key
-    postToProfile(message) {
-        let profilePost = new ProfilePost(this.__forum);
-        //profilePost.content = "Hello World";
-        profilePost.post(this,message);
-    }
+	get staff() {
+		return this.dat.is_staff;
+	};
 
-    set username(name) {
-        return this.setUsername(name);
-    }
+	on(event, callback) {
+		if (event == "connected")
+			this.__connectEvent = callback;
+	};
 
-    constructor(forum, id) {
-        this.__forum = forum;
-        this.__id = id;
-        this.__data = {};
-        forum.__api.getUserAsync({ id: id })
-        .then((userData) => {
-            //console.log(userData)
-            this.__data = JSON.parse(userData.body);
-            if (this.__connectEvent)
-                this.__connectEvent(this.dat);
-        })
-    }
+	setUsername(name) {
+		let params = {
+			id: this.dat.user_id,
+			username: name
+		};
+		return this.API.setUserNameAsync(params, "")
+			.then(response => {
+				if (response.body) {
+					let data = JSON.parse(response.body)
+					if (data.success) {
+						console.log('User[' + this.id.toString() + '] username changed successfully.')
+						this.__data.user.username = name;
+					} else {
+						console.warn('User[' + this.id.toString() + '] username change failed.')
+					}
+				}
+			});
+	};
+
+	// async
+	// writes a profile post to the user sent from the account linked with API key, does NOT work if no account is associated with  the API key
+	postToProfile(message) {
+		let profilePost = new ProfilePost(this.__forum);
+		profilePost.post(this, message);
+	};
+
+	set username(name) {
+		return this.setUsername(name);
+	};
+
+	constructor(forum, id) {
+		this.__forum = forum;
+		this.__id = id;
+		this.__data = {};
+		let params = { id: id };
+		forum.API.getUserAsync(params)
+			.then((userData) => {
+				//console.log(userData)
+				this.__data = JSON.parse(userData.body);
+				if (this.__connectEvent)
+					this.__connectEvent(this.dat);
+			})
+	}
 }
 module.exports = ForumUser;
